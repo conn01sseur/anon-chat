@@ -1,3 +1,3 @@
 <div align="center">
-  <h4>Anonymous chat</h4>
+  <h2>Anonymous chat</h2>
 </div>
