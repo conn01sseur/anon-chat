@@ -1,4 +1,4 @@
-from .config import DEFAULT_HOST, DEFAULT_PORT
+from config import DEFAULT_HOST, DEFAULT_PORT
 
 def show_banner(host, port):
     print(f"""

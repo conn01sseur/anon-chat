@@ -1,32 +1,39 @@
 import socket
 import threading
-from .crypto import encrypt, decrypt
-from .config import BUFFER_SIZE
+from config import BUFFER_SIZE
 
-def start_client(host, port, key):
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect((host, port))
-    return client
+def start_client(host, port):
+    try:
+        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client.connect((host, port))
+        return client
+    except Exception as e:
+        print(f"Connection error: {e}")
+        return None
 
 def start_server(host, port):
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind((host, port))
-    server.listen(1)
-    return server
+    try:
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.bind((host, port))
+        server.listen(1)
+        return server
+    except Exception as e:
+        print(f"Server start error: {e}")
+        return None
 
-def receive_messages(client, key, callback):
-    def run():
+def receive_messages(connection, key, callback):
+    def listener():
         while True:
             try:
-                data = client.recv(BUFFER_SIZE)
+                data = connection.recv(BUFFER_SIZE)
                 if not data:
                     break
-                decrypted = decrypt(data, key)
-                callback(decrypted)
+                callback(data)
             except Exception as e:
-                print(f"Ошибка получения: {e}")
+                print(f"Receive error: {e}")
                 break
-    thread = threading.Thread(target=run)
+    
+    thread = threading.Thread(target=listener)
     thread.daemon = True
     thread.start()
     return thread
